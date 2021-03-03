@@ -2,13 +2,25 @@
 'use strict';
 
 // Create an event listener so that when the delete link is clicked, the removeItemFromCart method is invoked.
-const table = document.getElementById('cart');
-table.addEventListener('click', removeItemFromCart);
-let cart;
+const table = document.getElementById( 'cart' );
+table.addEventListener( 'click', removeItemFromCart );
+let tbodyElement = document.getElementsByTagName( 'tbody' );
 
+let trHeadElementArr = document.getElementsByTagName ( 'tr' );
+let trHeadElement = trHeadElementArr[0];
+
+console.log( trHeadElementArr[0] );
+
+
+let cart;
+let imageName;
+// gets item array from --> local storage | or set cartTems as empty array
 function loadCart() {
-  const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-  cart = new Cart(cartItems);
+  const cartItems = JSON.parse( localStorage.getItem( 'cart' ) ) || [];
+  cart = new Cart( cartItems ); // new object of Cart constructor --> its items [] has data from local storage
+
+
+  //console.log( cart );
 }
 
 // Make magic happen --- re-pull the Cart, clear out the screen and re-draw it
@@ -19,48 +31,106 @@ function renderCart() {
 }
 
 // TODO: Remove all of the rows (tr) in the cart table (tbody)
-function clearCart() {}
+function clearCart() {
+
+  tbodyElement.innerHTML = '';
+}
+
 // TODO: Fill in the <tr>'s under the <tbody> for each item in the cart
-document.getElementsByTagName('tr').innerHTML ='';
-
-
 function showCart() {
+  let thElement = document.createElement ( 'th' );
+  trHeadElement.appendChild( thElement );
+  thElement.textContent = 'Images';
 
   // TODO: Find the table body
-  let tbody=document.getElementsByTagName('tbody')
-  // TODO: Add the TR to the TBODY and each of the TD's to the TR
+
   // TODO: Iterate over the items in the cart
-  for (let i = 0; i<cart.items.length;i++)
+  for ( let i = 0 ; i < cart.items.length ; i++ )
+  {
   // TODO: Create a TR
-  let tr = document.createElement('tr');
-    tr.setAttribute('id', i);
-    tbody.appendChild(tr);
-  // TODO: Create a TD for the delete link, quantity,  and the item
-let linkTd= document.createElement('td');
-tr.appendChild(linkTd);
-linkTd.textContent='X';
+    let trElement = document.createElement( 'tr' );
 
-let quantityTd = document.createElement('td');
-tr.appendChild(quantityTd);
-quantityTd.textContent = cart.items[i].quantity;
+    // TODO: Create a TD for the delete link, quantity,  and the item
+    let tdDeleteElement = document.createElement( 'td' );
+    let tdItemElement = document.createElement( 'td' );
+    let tdQutElement = document.createElement( 'td' );
 
-let itemTd = document.createElement('td');
-tr.appendChild(itemTd);
-itemTd.textContent = cart.items[i].product;
-     
+
+    let tdImageElement = document.createElement ( 'td' );
+    let imageElement = document.createElement ( 'img' );
+
+
+
+
+    // TODO: Add the TR to the TBODY and each of the TD's to the TR
+    trElement.appendChild( tdDeleteElement );
+    trElement.appendChild( tdItemElement );
+    trElement.appendChild( tdQutElement );
+
+
+    trElement.appendChild( tdImageElement );
+    tdImageElement.appendChild( imageElement );
+
+
+
+
+
+    tdDeleteElement.textContent = 'X';
+    tdItemElement.textContent = cart.items[i].product;
+    tdQutElement.textContent = cart.items[i].quantity;
+
+
+    // images ------------------------
+
+    imageName = cart.items[i].product;
+
+
+    for ( let j = 0 ; j < Product.allProducts.length ; j++ )
+    {
+
+      if ( imageName === Product.allProducts[j].name )
+      {
+        imageElement.src = Product.allProducts[j].filePath;
+        imageElement.style.width = '60px';
+        console.log( Product.allProducts[j].filePath );
+      }
+    }
+
+
+    tbodyElement[0].appendChild( trElement );
+  }
+
+  table.appendChild( tbodyElement[0] );
+
 }
 
 
-function removeItemFromCart(event) {
+
+
+function removeItemFromCart( event ) {
 
   // TODO: When a delete link is clicked, use cart.removeItem to remove the correct item
-  if (event.target.textContent === 'X') {
-    cart.removeItem(event.target.id);
-  // TODO: Save the cart back to local storage
-  localStorage.setItem('cart', JSON.stringify(cart.items));
-  // TODO: Re-draw the cart table
-  renderCart();
-}
+
+  if ( event.target.textContent === 'X' )
+  {
+    let clicked = event.target;
+
+    let content = clicked.nextSibling.textContent;
+    let deletedRow = clicked.parentNode;
+    //console.log(deletedRow);
+    for ( let i = 0 ; i < cart.items.length; i++ )
+    {
+      if ( content === cart.items[i].product )
+      {
+        cart.removeItem( i );
+        // // TODO: Save the cart back to local storage
+        localStorage.setItem( 'cart', JSON.stringify( cart.items ) );
+        deletedRow.remove();
+        // TODO: Re-draw the cart table
+      }
+    }
+
+  }}
+
 // This will initialize the page and draw the cart on screen
 renderCart();
-}
