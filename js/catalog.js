@@ -65,7 +65,8 @@ function updateCartPreview() {
   let divEl = document.getElementById('cartContents');
   let articleEl = document.createElement('article');
   divEl.appendChild(articleEl);
-  articleEl.textContent = `Product  :\n ${cart.items[[cart.items.length - 1]].product}     ,  Quantity:\n ${cart.items[[cart.items.length - 1]].quantity}`;
+  articleEl.textContent = `Product  :\n ${cart.items[[cart.items.length -1]].product}   
+    ,  Quantity:\n ${cart.items[[cart.items.length - 1]].quantity}`;
 }
 
 // Set up the "submit" event listener on the form.
